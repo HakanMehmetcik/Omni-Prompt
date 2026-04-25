@@ -30,21 +30,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const runEngine = async (text) => {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab) return;
+
         ui.status.textContent = "AI is thinking...";
         ui.inject.disabled = true;
 
-        chrome.runtime.sendMessage({
-            action: "COMPILE_AND_INJECT",
-            basicText: text,
-            flavor: ui.flavor.value,
-            autoSend: ui.auto.checked,
-            tabId: tab.id,
-            modelOverride: ui.model.value
-        }, (res) => {
+        // Modern Promise-based message sending to avoid "Port Closed" warnings
+        try {
+            const response = await chrome.runtime.sendMessage({
+                action: "COMPILE_AND_INJECT",
+                basicText: text,
+                flavor: ui.flavor.value,
+                autoSend: ui.auto.checked,
+                tabId: tab.id,
+                modelOverride: ui.model.value
+            });
+
             ui.inject.disabled = false;
-            if (res?.success) window.close();
-            else ui.status.textContent = res?.error || "Failed";
-        });
+            if (response && response.success) {
+                window.close();
+            } else {
+                ui.status.textContent = response?.error || "Failed";
+            }
+        } catch (err) {
+            ui.inject.disabled = false;
+            ui.status.textContent = "Engine error.";
+            console.error("Inference Error:", err);
+        }
     };
 
     ui.inject.addEventListener('click', () => {
@@ -53,19 +65,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     ui.revise.addEventListener('click', async () => {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab) return;
         
         ui.status.textContent = "Reading chatbox...";
 
-        // Send message with error handling to catch uninitialized content scripts
         chrome.tabs.sendMessage(tab.id, { action: "GET_CHATBOX_TEXT" }, (response) => {
             if (chrome.runtime.lastError) {
                 ui.status.textContent = "Error: Refresh the chat page!";
-                console.error("Bridge Error:", chrome.runtime.lastError.message);
                 return;
             }
 
             if (response && response.text) {
-                runEngine("Polish and improve this: " + response.text);
+                runEngine("Polish and improve this prompt: " + response.text);
             } else {
                 ui.status.textContent = "Chatbox is empty!";
             }
