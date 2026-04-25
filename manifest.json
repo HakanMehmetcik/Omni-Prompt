@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "OmniPrompt Pro",
+  "version": "2.5",
+  "description": "Local AI Prompt Engineering Suite for Researchers",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": [
+    "http://127.0.0.1:11434/*",
+    "*://*.chatgpt.com/*",
+    "*://*.gemini.google.com/*",
+    "*://*.perplexity.ai/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.chatgpt.com/*",
+        "*://*.gemini.google.com/*",
+        "*://*.perplexity.ai/*"
+      ],
+      "js": ["injector.js"]
+    }
+  ]
+}
