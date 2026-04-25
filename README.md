@@ -185,5 +185,6 @@ npm run lint
 ## License & Acknowledgements
 
 - **License:** MIT License.
-- **Credits:** Ollama Team for the local inference API; Hakan (Ankara University) for the research framework.
+- **Credits:** Ollama Team for the local inference API;
+- Hakan Mehmetcik (Marmara University) for the research framework.
 
