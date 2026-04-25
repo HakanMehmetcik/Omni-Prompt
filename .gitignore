@@ -1,0 +1,47 @@
+# --- System Files ---
+.DS_Store
+Thumbs.db
+*.swp
+*.log
+
+# --- IDE/Editor ---
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# --- Node/Dependencies (If you use npm for linting/testing) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# --- Extension Specifics ---
+# Exclude actual zip builds or packed files
+*.crx
+*.zip
+dist/
+build/
+
+# --- AI & Local Inference ---
+# If you ever save local model logs or exports
+.ollama/
+models/
+*.bin
+*.gguf
+*.onnx
+
+# --- Environment & Secrets ---
+# Crucial: Never commit your OpenAI API key or local dev configs
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+secrets.json
+
+# --- Documentation Artifacts ---
+# If you use tools to generate documentation from code
+docs/_site/
+.jekyll-cache/
